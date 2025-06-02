@@ -1,50 +1,61 @@
-<div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+<div class="flex h-full w-full flex-1 flex-col gap-6 rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-lg transition">
     <x-page-heading headingText="Position Management" descText="Manage your positions" />
 
-    {{-- Add Positions --}}
-    <flux:modal.trigger name="position">
-        <flux:button icon="plus" variant="primary" type="button" class="w-fit">
-            {{ __('Add Positions') }}
-        </flux:button>
-    </flux:modal.trigger>
+    {{-- Add Position --}}
+    <div class="flex justify-between items-center">
+        <flux:modal.trigger name="position">
+            <flux:button icon="plus" variant="primary" type="button" class="w-fit">
+                {{ __('Add Positions') }}
+            </flux:button>
+        </flux:modal.trigger>
+    </div>
 
     {{-- Table --}}
-    <table class="w-full table-auto border-collapse">
-        <thead>
-            <tr class="text-left text-sm uppercase font-bold border-b">
-                <th class="p-4 w-12">{{ __('No') }}</th>
-                <th class="p-4">{{ __('Name') }}</th>
-                <th class="p-4">{{ __('Department') }}</th>
-                <th class="p-4">{{ __('Actions') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($positions as $position)
-                <tr class="text-sm border-b border-neutral-500 hover:bg-gray-50/5">
-                    <td class="px-4 py-2">{{ $loop->iteration + ($positions->currentPage() - 1) * $positions->perPage() }}</td>
-                    <td class="px-4 py-2">{{ $position->name }}</td>
-                    <td class="px-4 py-2">{{ $position->department->name }}</td>
-                    <td class="px-4 py-2">
-                        <div class="flex items-center gap-2">
-                            <flux:button wire:click="openEditModal({{ $position->id }})" icon="pencil-square"
-                                variant="primary" type="button">
-                                {{ __('Edit') }}
-                            </flux:button>
-
-                            <flux:button
-                                wire:click="openDeleteModal('{{ $position->id }}', '{{ $position->name }}')"
-                                icon="trash" variant="danger" type="button">
-                                {{ __('Delete') }}
-                            </flux:button>
-
-                        </div>
-                    </td>
+    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-neutral-700 shadow-sm">
+        <table class="w-full table-auto text-sm text-left text-gray-700 dark:text-neutral-300">
+            <thead class="bg-gray-50 dark:bg-neutral-800 text-xs uppercase tracking-wider text-gray-600 dark:text-neutral-400 border-b dark:border-neutral-700">
+                <tr>
+                    <th class="p-4 w-12 font-semibold">{{ __('No') }}</th>
+                    <th class="p-4 font-semibold">{{ __('Name') }}</th>
+                    <th class="p-4 font-semibold">{{ __('Department') }}</th>
+                    <th class="p-4 font-semibold">{{ __('Actions') }}</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-neutral-800">
+                @forelse ($positions as $position)
+                    <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/30 transition">
+                        <td class="px-4 py-3">{{ $loop->iteration + ($positions->currentPage() - 1) * $positions->perPage() }}</td>
+                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-neutral-100">{{ $position->name }}</td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-neutral-300">{{ $position->department->name }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2 flex-wrap">
+                                <flux:button wire:click="openEditModal({{ $position->id }})" icon="pencil-square"
+                                    variant="primary" type="button">
+                                    {{ __('Edit') }}
+                                </flux:button>
 
-    {{ $positions->links() }}
+                                <flux:button
+                                    wire:click="openDeleteModal('{{ $position->id }}', '{{ $position->name }}')"
+                                    icon="trash" variant="danger" type="button">
+                                    {{ __('Delete') }}
+                                </flux:button>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-neutral-400 italic">
+                            No positions found.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex justify-end">
+        {{ $positions->links() }}
+</div>
 
     {{-- Modal Add / Edit Positions --}}
     <flux:modal wire:close="closeModal" name="position" class="md:w-96">

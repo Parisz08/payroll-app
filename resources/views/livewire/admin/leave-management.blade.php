@@ -1,52 +1,33 @@
 <div>
     <x-page-heading headingText="Leave Management" descText="Manage your employees leave requests" />
 
-    <div class="w-full overflow-x-auto mt-4">
+    <div class="w-full overflow-x-auto mt-6">
         <div class="inline-block min-w-full align-middle">
-            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-300 dark:divide-neutral-700">
-                    <thead class="bg-gray-50 dark:bg-neutral-800">
+            <div class="overflow-hidden shadow-xl ring-1 ring-gray-200 dark:ring-neutral-700 sm:rounded-2xl">
+                <table class="min-w-full divide-y divide-gray-300 dark:divide-neutral-700 text-sm">
+                    <thead class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-neutral-800 dark:to-neutral-900">
                         <tr>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                Employee
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                Leave Type
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                From - To
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                Created At
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                                Actions
-                            </th>
+                            @foreach (['Employee', 'Leave Type', 'From - To', 'Status', 'Created At', 'Actions'] as $header)
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-neutral-300 uppercase tracking-wider">
+                                    {{ $header }}
+                                </th>
+                            @endforeach
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-neutral-700">
+                    <tbody class="bg-white dark:bg-neutral-900 divide-y divide-gray-200 dark:divide-neutral-700">
                         @forelse ($leaveRequests as $data)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/30">
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-200 capitalize">
-                                    {{ $data->employee->full_name }}</td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-200 capitalize">
-                                    {{ $data->leave_type }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
+                            <tr class="transition duration-150 hover:bg-blue-50 dark:hover:bg-neutral-800/30 group">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-neutral-200 capitalize">
+                                    {{ $data->employee->full_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-neutral-200 capitalize">
+                                    {{ $data->leave_type }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-neutral-400">
                                     {{ \Carbon\Carbon::parse($data->start_date)->format('d M Y') }} -
                                     {{ \Carbon\Carbon::parse($data->end_date)->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($data->status == 'pending')
                                         <flux:badge variant="pill" color="yellow">Pending</flux:badge>
                                     @elseif ($data->status == 'approved')
@@ -55,24 +36,28 @@
                                         <flux:badge variant="pill" color="red">Rejected</flux:badge>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-neutral-400 max-w-sm truncate">
+                                <td class="px-6 py-4 text-gray-500 dark:text-neutral-400 truncate">
                                     {{ \Carbon\Carbon::parse($data->created_at)->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2">
-                                    <flux:button icon="eye" variant="filled" type="button" class="w-fit"
-                                        wire:click="openViewModal({{ $data->id }})">
-                                        {{ __('View') }}
-                                    </flux:button>
-                                    <flux:button icon="chevron-up-down" variant="primary" type="button" class="w-fit"
-                                        wire:click="openStatusModal({{ $data->id }})">
-                                        {{ __('Change Status') }}
-                                    </flux:button>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex gap-2">
+                                        <flux:button icon="eye" variant="filled" type="button"
+                                            class="w-fit transition hover:scale-105 shadow-sm"
+                                            wire:click="openViewModal({{ $data->id }})">
+                                            {{ __('View') }}
+                                        </flux:button>
+                                        <flux:button icon="chevron-up-down" variant="primary" type="button"
+                                            class="w-fit transition hover:scale-105 shadow-sm"
+                                            wire:click="openStatusModal({{ $data->id }})">
+                                            {{ __('Change Status') }}
+                                        </flux:button>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5"
-                                    class="px-6 py-4 text-center text-sm text-gray-500 dark:text-neutral-400">
+                                <td colspan="6"
+                                    class="px-6 py-6 text-center text-sm italic text-gray-500 dark:text-neutral-400">
                                     You haven't made any leave requests yet.
                                 </td>
                             </tr>
@@ -82,7 +67,8 @@
             </div>
         </div>
     </div>
-    <div class="mt-4">
+
+    <div class="mt-6">
         {{ $leaveRequests->links() }}
     </div>
 

@@ -1,49 +1,44 @@
 <div>
     <x-page-heading headingText="Request Leave" descText="Manage your leave requests and approvals" />
 
-    <flux:button icon="plus" variant="primary" type="button" class="w-fit" wire:click="openModal">
+    <flux:button icon="plus" variant="primary" type="button" class="w-fit hover:scale-105 transition" wire:click="openModal">
         {{ __('Request Leave') }}
     </flux:button>
 
-    <div class="w-full overflow-x-auto mt-4">
+    <div class="w-full overflow-x-auto mt-6">
         <div class="inline-block min-w-full align-middle">
-            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-300 dark:divide-neutral-700">
-                    <thead class="bg-gray-50 dark:bg-neutral-800">
+            <div class="overflow-hidden shadow-xl rounded-2xl ring-1 ring-gray-300 dark:ring-neutral-700 bg-white dark:bg-neutral-900">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                    <thead class="bg-gray-100 dark:bg-neutral-800">
                         <tr>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-neutral-400 uppercase tracking-wider">
                                 Leave Type
                             </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-neutral-400 uppercase tracking-wider">
                                 From - To
                             </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-neutral-400 uppercase tracking-wider">
                                 Status
                             </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-neutral-400 uppercase tracking-wider">
                                 Created At
                             </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-neutral-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-neutral-700">
+                    <tbody class="bg-white dark:bg-neutral-900 divide-y divide-gray-100 dark:divide-neutral-800">
                         @forelse ($leaveRequests as $data)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/30">
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-200 capitalize">
-                                    {{ $data->leave_type }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
-                                    {{ \Carbon\Carbon::parse($data->start_date)->format('d M Y') }} -
+                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/40 transition duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800 dark:text-white capitalize">
+                                    {{ $data->leave_type }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-neutral-400">
+                                    {{ \Carbon\Carbon::parse($data->start_date)->format('d M Y') }} –
                                     {{ \Carbon\Carbon::parse($data->end_date)->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     @if ($data->status == 'pending')
                                         <flux:badge variant="pill" color="yellow">Pending</flux:badge>
                                     @elseif ($data->status == 'approved')
@@ -52,21 +47,21 @@
                                         <flux:badge variant="pill" color="red">Rejected</flux:badge>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-neutral-400 max-w-sm truncate">
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-neutral-400">
                                     {{ \Carbon\Carbon::parse($data->created_at)->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2">
-                                    <flux:button icon="eye" variant="filled" type="button" class="w-fit"
+                                <td class="px-6 py-4 whitespace-nowrap flex gap-2">
+                                    <flux:button icon="eye" variant="filled" type="button" class="transition hover:scale-105"
                                         wire:click="openViewModal({{ $data->id }})">
                                         {{ __('View') }}
                                     </flux:button>
                                     @if ($data->status == 'pending')
-                                        <flux:button icon="pencil" variant="primary" type="button" class="w-fit"
+                                        <flux:button icon="pencil" variant="primary" type="button" class="transition hover:scale-105"
                                             wire:click="openModal({{ $data->id }})">
                                             {{ __('Edit') }}
                                         </flux:button>
                                     @endif
-                                    <flux:button icon="trash" variant="danger" type="button" class="w-fit"
+                                    <flux:button icon="trash" variant="danger" type="button" class="transition hover:scale-105"
                                         wire:click="openDeleteModal({{ $data->id }})">
                                         {{ __('Delete') }}
                                     </flux:button>
@@ -74,8 +69,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5"
-                                    class="px-6 py-4 text-center text-sm text-gray-500 dark:text-neutral-400">
+                                <td colspan="5" class="px-6 py-6 text-center text-sm italic text-gray-500 dark:text-neutral-400">
                                     You haven't made any leave requests yet.
                                 </td>
                             </tr>
@@ -85,7 +79,6 @@
             </div>
         </div>
     </div>
-
 
 
     {{-- Main Modal --}}
